@@ -1,0 +1,6 @@
+q #exit only
+echo hello ; q
+echo hello && q
+echo hello || q
+echo hello # q
+q
