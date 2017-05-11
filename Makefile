@@ -1,14 +1,9 @@
-CC=g++
-CC_FLAGS= -std=c++11 
-EXEC=test.out
-SOURCES=$(wildcard *.cpp)
-OBJECTS=$(SOURCES:.cpp=.o)
+CVER = g++
+WFLAGS = -Wall -Werror -ansi -pedantic
+ODIR = bin
 
-$(EXEC): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXEC)
+all: rshell
 
-%.o: %.cpp
-	$(CC) -c $(CC_FLAGS) $< -o $@
+rshell: ; mkdir -p $(ODIR) ; $(CVER) src/main.cpp src/Command.cpp src/execute.cpp $(WFLAGS) -o $(ODIR)/rshell
 
-clean:
-	rm -f $(EXEC) $(OBJECTS)
+clean: ; rm -rf bin
