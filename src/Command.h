@@ -2,7 +2,7 @@
 #define COMMAND_H
 #include <iostream>
 #include <string>
-//#include <boost/foreach.hpp>
+#include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 using namespace std;
 
