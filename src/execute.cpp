@@ -337,7 +337,7 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
 	
         if(allTrue == false && percon == true && counter == 0)
         {
-            if(idex + tokens.at(idex)->getprec() != tokens.size()-1)
+            if(unsigned(idex + tokens.at(idex)->getprec()) != tokens.size()-1)
             {
                 x+= tokens.at(idex)->getprec();
                 index += tokens.at(idex)->getprec();
