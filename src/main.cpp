@@ -48,11 +48,13 @@ void parse(string text,vector<Command*>& tokens)
             tokens[numb]->addsign(0);       
             numb ++;
         }
-       
+     
+    //check for the parenthesis and removes the parenthesis and any extra spaces then updates the token    
+        
     bool prec = false;
     int in;
     int sie = 1;
-    for(unsigned i = 0; i<tokens.size(); i++)           //（echo a && echo b || echo c)
+    for(unsigned i = 0; i<tokens.size(); i++)           
     {        
         if(tokens[i]->tokenCheck().at(0) == ' ')
         { 
@@ -112,47 +114,6 @@ void parse(string text,vector<Command*>& tokens)
         }
 
     }
-    // bool prec = false;
-    // int in;
-    // int sie = 1;
-    // for(unsigned i = 0; i<tokens.size(); i++)           //（echo a && echo b || echo c)
-    // {        
-    //     if(tokens[i]->tokenCheck().at(0) == ' ')
-    //     { 
-    //         string temp = tokens[i]->tokenCheck();
-    //         temp.erase(temp.begin(), temp.begin()+1);
-    //         tokens[i]->addtoken(temp);
-    //     }
-    //     if(tokens[i]->tokenCheck().at(tokens[i]->tokenCheck().size()-1) == ' ')
-    //     { 
-    //         string temp = tokens[i]->tokenCheck();
-    //         temp.erase(temp.end()-1, temp.end());
-    //         tokens[i]->addtoken(temp);
-    //     }
-    //     if(prec == true)
-    //     {
-    //         sie++;
-    //     }
-    //     if(tokens[i]->tokenCheck().at(0) == '(')
-    //     {
-    //         string temp = tokens[i]->tokenCheck();
-    //         temp.erase(temp.begin(), temp.begin()+1);
-    //         tokens[i]->addtoken(temp);
-    //         prec = true;
-    //         in = i;
-    //     }
-    //     if(tokens[i]->tokenCheck().at(tokens[i]->tokenCheck().size()-1) == ')')
-    //     {
-    //         tokens[in]->addprec(sie);
-    //         //tokens[i]->addsign();
-    //         sie = 1;
-    //         //in = 0;
-    //         prec = false;
-    //         string temp = tokens[i]->tokenCheck();
-    //         temp.erase(temp.end()-1, temp.end());
-    //         tokens[i]->addtoken(temp);
-    //     }
-    // }
            
 }
 
