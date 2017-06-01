@@ -14,6 +14,7 @@ class Execute{
         void terminal(const vector<Command*>& tokens);
         void parsecmd(string convert, vector<string>&parse);
         char* to_char(const string &token);
+        void runtest(Command* test);
         
 };
 

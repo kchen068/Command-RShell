@@ -12,6 +12,8 @@ class Command
         string token;
         bool status;
         int sign;
+        bool test;
+        int precsize;
 
     public:
         Command();
@@ -22,6 +24,10 @@ class Command
         void addstatus(bool st);
         void addtoken(string tk);
         void addsign(int s);
+        bool istest();
+        void addtest(bool tst);
+        void addprec(int i);
+        int getprec();
 };
 
 
