@@ -333,6 +333,8 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
         }
         counter --;
         
+	//skips the next token or tokens depending on whether or not there are parenthesis
+	
         if(allTrue == false && percon == true && counter == 0)
         {
             if(idex + tokens.at(idex)->getprec() != tokens.size()-1)
