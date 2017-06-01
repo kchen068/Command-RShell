@@ -1,0 +1,14 @@
+(echo success)
+(echo success1 && echo success 2)
+(echo 1 && echo 2) || echo A
+(echo 1 && echo 2) || (echo A && echo B)
+(echo 1 && echo 2) && (echo A && echo B)
+(ls -a && mkdir test) || (rm -r test && echo testremoved)
+(rm -r test && echo testremoved) 
+((echo 2)||(echo 2))
+(((echo hello))||((echo hi)))
+(test -e main.cpp)
+(test -f main.cpp)
+(test -d main.cpp)
+([main.cpp])
+q
