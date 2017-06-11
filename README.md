@@ -35,6 +35,7 @@ BUGS:
 * Echo with any of the connectors "# ; || &&" will not execute properly due to the tokenizer.
 * "q" must be entered by itself when trying to exit. (Am not sure if the program had to handle "q" in a line of commands. (5/10/17 11:54pm)
 * Echo multiple words/sentences will sometimes result in the output: "Error: echo command not found"
+* When using file redirection you must have a space before and after the "<",">", and ">>". E.G.("cat > input.txt"  and " cat >> input.txt") not following this format may cause an error. 
 
 LANGUAGE: 
 ---
