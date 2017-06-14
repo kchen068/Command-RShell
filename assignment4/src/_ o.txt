@@ -1,0 +1,19 @@
+.
+..
+> o.txt
+Command.cpp
+Command.h
+Command.o
+Makefile
+bin
+dfd
+execute.cpp
+execute.h
+execute.o
+input.txt
+main.cpp
+main.o
+output.txt
+test
+test.out
+test2
