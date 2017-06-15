@@ -19,38 +19,110 @@ void parse(string text,vector<Command*>& tokens)
         Command* a = new Command();
         a->addtoken(t);
         tokens.push_back(a);
-        
-             
      }
+     
+      //for(auto i : tokens){
+        //  cout << i->tokenCheck() << endl;
+      //}
         
          tokens.at(0)->addsign(1);          //because the first token has no sign
          int numb = 1;                      //keep track of vector
          
-    for(unsigned i = 0; i< text.size()-1; i++) //this function will determine the sign(|| $$ && #) 
+         
+        
+        
+         
+    for(unsigned i = 0; i< text.size()-1; i++) //this function will determine the sign(|| $$ && # | ) 
     {
-        if(text.substr(i,2) == "||")        //int vector where 0 = #
-        {                                   // 1 = ;
-            tokens[numb]->addsign(2);       // 2 = ||
+        //int vector where 0 = #, 1 = ;, 2 = ||, 3 = &&, 4 = test or [], 5 = | pipe
+        
+        if(text.substr(i,2) == "||")        
+        {                                   
+            tokens[numb]->addsign(2);       
             numb ++;
-        }                                   // 3 = &&
-        if(text.at(i) == ';')              
-        {
-            tokens[numb]->addsign(1);        
-            numb ++;
-        }
-        if(text.substr(i,2) == "&&")        // second parameter of substr() is length of substring
+        }                                   
+       if(text.at(i) == ';')              
+        {                                   
+            tokens[numb]->addsign(1);       
+            numb ++;                        
+        }                                    
+       if(text.substr(i,2) == "&&")        
         {
             tokens[numb]->addsign(3);        
             numb ++;
         }
-        if(text.at(i) == '#')
+       if(text.at(i) == '#')
         {
             tokens[numb]->addsign(0);       
             numb ++;
         }
-       
+        if(text.substr(i,3) == " | ")
+        {
+            
+            tokens[numb]->addsign(5);
+            tokens[numb]->addpipe(1);
+            //cout << tokens[numb]->tokenCheck()<<" has sign 5" << endl;
+            numb ++;
+        }
         
+    
+        
+      
+       
+    bool prec = false;                                  //---------for int redirect
+    int in;                                             
+    int sie = 1;                                        // second parameter of substr() is length of substring             
+    for(unsigned i = 0; i<tokens.size(); i++)           //（echo a && echo b || echo c)
+    {        
+        if(tokens[i]->tokenCheck().at(0) == ' ')
+        { 
+            string temp = tokens[i]->tokenCheck();
+            temp.erase(temp.begin(), temp.begin()+1);
+            tokens[i]->addtoken(temp);
+        }
+        if(tokens[i]->tokenCheck().at(tokens[i]->tokenCheck().size()-1) == ' ')
+        { 
+            string temp = tokens[i]->tokenCheck();
+            temp.erase(temp.end()-1, temp.end());
+            tokens[i]->addtoken(temp);
+        }
+        if(prec == true)
+        {
+            sie++;
+        }
+        if(tokens[i]->tokenCheck().at(0) == '(')
+        {
+            string temp = tokens[i]->tokenCheck();
+            temp.erase(temp.begin(), temp.begin()+1);
+            tokens[i]->addtoken(temp);
+            prec = true;
+            in = i;
+        }
+        if(tokens[i]->tokenCheck().at(tokens[i]->tokenCheck().size()-1) == ')')
+        {
+            tokens[in]->addprec(sie);
+            //tokens[i]->addsign();
+            sie = 1;
+            //in = 0;
+            prec = false;
+            string temp = tokens[i]->tokenCheck();
+            temp.erase(temp.end()-1, temp.end());
+            tokens[i]->addtoken(temp);
+        }
+    }  
     }
+    for(unsigned i = 0; i<tokens.size()-1; i++)
+        {
+            
+            if(tokens.at(i+1)->signCheck() == 5 && tokens.at(i)->signCheck() != 5 )
+            {
+                tokens.at(i)->addpipe(1);
+            }
+        
+        }
+    
+     
+    
     for(unsigned i = 0; i<tokens.size(); i++)  //we remove any whitespace in the token and will determine whether it is a test or not
     {
         if(tokens[i]->tokenCheck().at(0) == ' ')
@@ -70,9 +142,31 @@ void parse(string text,vector<Command*>& tokens)
             tokens[i]->addsign(4);                                                                   
             tokens[i]->addtest(true);
         }
+        
+        for(unsigned j = 0; j < tokens[i]->tokenCheck().size(); j++)   // 1 = <, 2 = >>, 3 = >
+        {
+            if(tokens[i]->tokenCheck().substr(j,3) == " > ")
+            {
+                tokens[i]->addredirect(3);
+             
+            }
+            if(tokens[i]->tokenCheck().substr(j,2) == ">>")
+            {
+                tokens[i]->addredirect(2);
+               
+            }
+            if(tokens[i]->tokenCheck().substr(j,3) == " < ")
+            {
+                tokens[i]->addredirect(1);
+               
+            }
+        }
 
     }
-           
+ 
+    //       for(auto i : tokens){
+    //      cout << i->tokenCheck() << i->signCheck() << i->getredirect() << i->getpipe() << endl;
+    //  }
 }
 
 

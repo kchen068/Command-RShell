@@ -15,6 +15,10 @@ class Execute{
         void parsecmd(string convert, vector<string>&parse);
         char* to_char(const string &token);
         void runtest(Command* test);
+        int redirection(Command* r);
+        void piping(vector<string>& p);
+        int append(string second, vector<char*> first);
+        int truncate(string second, vector<char*> first);
         
 };
 
