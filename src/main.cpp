@@ -21,9 +21,6 @@ void parse(string text,vector<Command*>& tokens)
         tokens.push_back(a);
      }
      
-      //for(auto i : tokens){
-        //  cout << i->tokenCheck() << endl;
-      //}
         
          tokens.at(0)->addsign(1);          //because the first token has no sign
          int numb = 1;                      //keep track of vector
@@ -61,7 +58,7 @@ void parse(string text,vector<Command*>& tokens)
             
             tokens[numb]->addsign(5);
             tokens[numb]->addpipe(1);
-            //cout << tokens[numb]->tokenCheck()<<" has sign 5" << endl;
+           
             numb ++;
         }
         
@@ -101,9 +98,8 @@ void parse(string text,vector<Command*>& tokens)
         if(tokens[i]->tokenCheck().at(tokens[i]->tokenCheck().size()-1) == ')')
         {
             tokens[in]->addprec(sie);
-            //tokens[i]->addsign();
+            
             sie = 1;
-            //in = 0;
             prec = false;
             string temp = tokens[i]->tokenCheck();
             temp.erase(temp.end()-1, temp.end());
@@ -112,14 +108,28 @@ void parse(string text,vector<Command*>& tokens)
     }  
     }
     for(unsigned i = 0; i<tokens.size()-1; i++)
-        {
+    {
             
-            if(tokens.at(i+1)->signCheck() == 5 && tokens.at(i)->signCheck() != 5 )
-            {
-                tokens.at(i)->addpipe(1);
-            }
-        
+        if(tokens.at(i+1)->signCheck() == 5 && tokens.at(i)->signCheck() != 5 )
+        {
+            tokens.at(i)->addpipe(2);
         }
+    }
+    
+    for(unsigned i = 0; i<tokens.size()-1; i++)
+    {
+        if((i + 1) == tokens.size()-1)
+        {
+            tokens.at(i+1)->addpipe(3);
+        }
+        else
+        {
+            if(tokens.at(i)->getpipe() == 1 && tokens.at(i+1)->getpipe() ==0)
+            {
+                tokens.at(i)->addpipe(3);
+            }
+        }
+    }
     
      
     
@@ -161,12 +171,12 @@ void parse(string text,vector<Command*>& tokens)
                
             }
         }
+        
+        
 
     }
- 
-    //       for(auto i : tokens){
-    //      cout << i->tokenCheck() << i->signCheck() << i->getredirect() << i->getpipe() << endl;
-    //  }
+   
+    
 }
 
 
@@ -189,7 +199,7 @@ int main() {
         cout << "$ type command(s) or q to quit" << endl;
         cout << "$ ";
         getline(cin, text);
-       //cout << endl;
+       
         if(text == "q")return 0;
         
         parse(text,com);                //call token function to parse text and also to remove any comments

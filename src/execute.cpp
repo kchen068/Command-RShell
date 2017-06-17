@@ -33,7 +33,7 @@ void Execute::parsecmd(string text, vector<string>&parse) //this function conver
 {
     parse.clear(); // clears the vector of any previous instructions
     boost::split(parse, text, boost::is_any_of(" "));
-  
+    
 }
 
 char* Execute::to_char(const string &token)// this function converts the individual words from parsecmd into char** so we can use execvp
@@ -48,7 +48,7 @@ int Execute::forking(const vector<char*>&convert)//this function takes care of e
     int termstat;
     char** arg = &temp.at(0);
     pid_t pid = fork();
-     
+      
     if(pid < 0)
     {
         perror("$ Error: fork failed");
@@ -60,7 +60,9 @@ int Execute::forking(const vector<char*>&convert)//this function takes care of e
         int check = execvp(arg[0],arg);
         if(check < 0)
         {
+           
             cout << "$ Error: " << arg[0] <<" command not found" << endl;
+            
             _exit(-127);
         }
            
@@ -208,34 +210,7 @@ void Execute::runtest(Command* test)
 }
 int Execute::append(string second, vector<char*> firstconvert)
 {           
-            /*int check;
-            char file[256];
-            strcpy(file, to_char(second));
-            int redir;
-            if((redir = open(file, O_RDWR | O_APPEND | O_CREAT , S_IRUSR | S_IWUSR | S_IROTH | S_IRGRP )) == -1)
-            {
-    				perror("Error with output redirection"); //error message with output redirection
-    				//return redir;
-
-    		}
-    		
-            int sd = dup(1);
-
-            if(-1 == dup2(redir, 1))
-            {
-	        	perror("There was an error with dup2");
-		    
-            }
-            //lhs->run();
-            check = forking(firstconvert);
-            
-            if(-1 == dup2(sd, 1))
-            {
-	        	perror("There was an error with dup2");
-		    
-            }
-            
-            return check;*/
+           
    
     int out = open(to_char(second), O_WRONLY | O_APPEND | O_CREAT, S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
     int fd = dup(1);
@@ -370,65 +345,82 @@ int Execute::redirection(Command* r)
     return check;
 }
 
-void Execute::piping(vector<string>& pips)
-    {
-    //vector<string> pips;
-    // pips.push_back(pipps.at(0)->tokenCheck());
-    // pips.push_back(pipps.at(1)->tokenCheck());
-    vector<string> cmd0;
-    vector<string> cmd1;
-    vector<char*> charcmd0;
-    vector<char*> charcmd1;
+int Execute::piping(vector<Command*>& pips)
+{
+    //cout << "made it to piping" << endl;
+    vector<string> one;
+    vector<string> two;
+    vector<char*> oneone;
+    vector<char*> twotwo;
     
-    string temp = pips.at(0);
-    for(unsigned i = 0; i < temp.size(); i++)
+    string ones = pips.at(0)->tokenCheck();
+    string twos = pips.at(1)->tokenCheck();
+    
+    //cout << ones << "|||||" << twos << endl;
+    parsecmd(ones, one);
+    parsecmd(twos, two);
+    
+    for(unsigned i = 0; i < one.size(); i++)
     {
-        if(temp.substr(i,3) == " | ")
+       if(one.at(i) != "<" && one.at(i) != ">" && one.at(i) != ">>" )
         {
-            //string ends = i;
-            temp.erase(temp.begin()+i,temp.begin()+i+3);
+            oneone.push_back(to_char(one.at(i)));
         }
     }
-    parsecmd(pips.at(0), cmd0);
-    parsecmd(pips.at(1), cmd1);
+    oneone.push_back(NULL);
     
-    for(unsigned i = 0; i < cmd0.size(); i++)
+    for(unsigned i = 0; i < two.size(); i++)
     {
-        charcmd0.push_back(to_char(cmd0[i]));
+        twotwo.push_back(to_char(two[i]));
     }
+    twotwo.push_back(NULL);
     
-    for(unsigned i = 0; i < cmd1.size(); i++)
-    {
-        charcmd1.push_back(to_char(cmd1[i]));
-    }
-    
-    char** arg0 = &charcmd0.at(0);
-    char** arg1 = &charcmd1.at(0);
-    
-    
+    char** arg0 = &oneone.at(0);
+    char** arg1 = &twotwo.at(0);
    
-    int pipefd[2];
-    int pp;
-    pipe(pipefd);
-    pp = fork();
-    if(pp == 0)
-    {
-        dup2(pipefd[0], 0);
-        close(pipefd[1]);
-        //execvp(arg1[0], arg1);
-        execvp(*arg1, arg1);
-    }
-    else
-    {
-        dup2(pipefd[1], 1);
-        close(pipefd[0]);
-        //execvp(arg0[0], arg0);
-        execvp(*arg0, arg0);
-    }
+   
+    const int PIPE_READ = 0;
+    const int PIPE_WRITE = 1;
+
+    int check1;
+    int check2;
+    int fds[2];
+    int r;
+    int sav = dup(1);
+    int xx = -1;
     
+    
+    r = pipe(fds);
+    if(r == -1)
+    {
+        perror("pipe");
+        return -1;
+    }
+    dup2(fds[PIPE_WRITE], 1);
+    check1 = forking(oneone);
+    close(fds[PIPE_WRITE]);
+    
+    int savs = dup(0);
+    if(dup2(fds[PIPE_READ], STDIN_FILENO) == -1)
+    {
+        perror("dup2");
+    }
+    dup2(sav, STDOUT_FILENO);
+    check2 = forking(twotwo);
+    if(check2 == 0)
+    {
+        xx = 0;
+    }
+    close(fds[PIPE_READ]);
+    dup2(savs, STDIN_FILENO);
+    close(savs);
+    close(sav);
+    //close(fds[PIPE_WRITE]);   //added
+    //close(fds[PIPE_READ]);
+    return xx;
 }
 
-//void Execute::piping(vector<Command*>& pips)
+
 
 
 
@@ -448,13 +440,14 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
     // < = input redirection
     // >> = appends to a file or creates file if it doesn't exist
     // | = piping  
+    
     bool percon = false;
     int counter = 0;
     int idex;
     bool allTrue = false;
+    
     for(unsigned x = 0; x < tokens.size(); x++)
     {
-        
         convert.resize(0);
         text = tokens.at(x)->tokenCheck();
         parsecmd(text,parse);
@@ -481,36 +474,57 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
         if(tokens.at(index)->signCheck() == 1)  // ; always runs
             {
                 
-                if(tokens.at(index)->getpipe() == 1)
+                if(tokens.at(index)->getpipe() == 2)
                 {
-                    vector<string> p;
-                    p.push_back(tokens.at(index)->tokenCheck());
-                    p.push_back(tokens.at(index+1)->tokenCheck());
-                    piping(p);
-                }
-                
-                
-                if(tokens.at(index)->getredirect() == 1 || tokens.at(index)->getredirect() == 2 || tokens.at(index)->getredirect() == 3 )
-                {
-                    check = redirection(tokens.at(index));
-                }
-    
-                else
-                {
-                    check = forking(convert);
-                    if(check == 0)
+                    vector<Command*> p;
+                    // p.push_back(tokens.at(index));
+                    // p.push_back(tokens.at(index+1));
+                    // piping(p);
+                    int y = index;
+                    while(tokens.at(y)->getpipe() != 3)
+                    {
+                        //cout << tokens.at(y)->tokenCheck() << endl;
+                        p.push_back(tokens.at(y));
+                        y++;
+                    }
+                    //cout << tokens.at(y)->tokenCheck() << endl;
+                    p.push_back(tokens.at(y));
+                    // for(auto i : tokens)
+                    // {
+                    //     cout << i->tokenCheck() << " " << endl;
+                    // }
+                    if(piping(p) != -1)
                     {
                         tokens.at(index)->addstatus(true);
                     }
-                
-                    else
-                    {
-                        tokens.at(index)->addstatus(false);
-                        allTrue = false;
                     
-                    }
+                    index += p.size()-1;
                 }
                 
+                else
+                {
+                
+                    if(tokens.at(index)->getredirect() == 1 || tokens.at(index)->getredirect() == 2 || tokens.at(index)->getredirect() == 3 )
+                    {
+                        check = redirection(tokens.at(index));
+                    }
+        
+                    else
+                    {
+                        check = forking(convert);
+                        if(check == 0)
+                        {
+                            tokens.at(index)->addstatus(true);
+                        }
+                    
+                        else
+                        {
+                            tokens.at(index)->addstatus(false);
+                            allTrue = false;
+                        
+                        }
+                    }
+                }
                
             }
             
@@ -520,13 +534,29 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
                 
                 if(tokens.at(index-1)->statusCheck() == false)
                     {
-                         if(tokens.at(index)->getpipe() == 1)
+                         if(tokens.at(index)->getpipe() == 2)
                             {
-                                vector<string> p;
-                                p.push_back(tokens.at(index)->tokenCheck());
-                                p.push_back(tokens.at(index+1)->tokenCheck());
-                                piping(p);
-                            }
+                                vector<Command*> p;
+                                // p.push_back(tokens.at(index));
+                                // p.push_back(tokens.at(index+1));
+                                // piping(p);
+                                int y = index;
+                                while(tokens.at(y)->getpipe() != 3)
+                                {
+                                    //cout << tokens.at(y)->tokenCheck() << endl;
+                                    p.push_back(tokens.at(y));
+                                    y++;
+                                }
+                               // cout << tokens.at(y)->tokenCheck() << endl;
+                        p.push_back(tokens.at(y));
+                                //piping(p);
+                                //index += p.size()-1;
+                                if(piping(p) != -1)
+                                {
+                                    tokens.at(index)->addstatus(true);
+                                }
+                                index += p.size()-1;
+                              
                         
                         if(tokens.at(index)->getredirect() == 1 || tokens.at(index)->getredirect() == 2 || tokens.at(index)->getredirect() == 3 )
                             {
@@ -556,13 +586,30 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
                 {
                     if(tokens.at(index-1)->statusCheck() == true || tokens.at(index-2)->statusCheck() == true)
                     {
-                        if(tokens.at(index)->getpipe() == 1)
+                        if(tokens.at(index)->getpipe() == 2)
+                        {
+                                vector<Command*> p;
+                            //     p.push_back(tokens.at(index));
+                            //     p.push_back(tokens.at(index+1));
+                            //     piping(p);
+                            // }
+                            int y = index;
+                            while(tokens.at(y)->getpipe() != 3)
                             {
-                                vector<string> p;
-                                p.push_back(tokens.at(index)->tokenCheck());
-                                p.push_back(tokens.at(index+1)->tokenCheck());
-                                piping(p);
+                               // cout << tokens.at(y)->tokenCheck() << endl;
+                                p.push_back(tokens.at(y));
+                                y++;
                             }
+                            //cout << tokens.at(y)->tokenCheck() << endl;
+                        p.push_back(tokens.at(y));
+                            //piping(p);
+                            //index += p.size()-1;
+                            if(piping(p) != -1)
+                            {
+                                tokens.at(index)->addstatus(true);
+                            }
+                            index += p.size()-1;
+                        }
                         
                         if(tokens.at(index)->getredirect() == 1 || tokens.at(index)->getredirect() == 2 || tokens.at(index)->getredirect() == 3 )
                             {
@@ -591,6 +638,25 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
                 {
                     if(tokens.at(index-1)->statusCheck() == true)
                     {
+                        if(tokens.at(index)->getpipe() == 2)
+                            {
+                                vector<Command*> p;
+                                int y = index;
+                                while(tokens.at(y)->getpipe() != 3)
+                                {
+                                    //cout << tokens.at(y)->tokenCheck() << endl;
+                                    p.push_back(tokens.at(y));
+                                    y++;
+                                }
+                                //cout << tokens.at(y)->tokenCheck() << endl;
+                                p.push_back(tokens.at(y));
+                               // piping(p);
+                                if(piping(p) != -1)
+                                {
+                                    tokens.at(index)->addstatus(true);
+                                }
+                                index += p.size()-1;
+                            }
                         check = forking(convert);
                         if(check == 0)
                         {
@@ -612,16 +678,34 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
             //call test function
             Command* tst = tokens.at(index);
             runtest(tst);
+            
         }
         if(tokens.at(index)->signCheck() == 5)
         {
-            vector<string> p;
-            p.push_back(tokens.at(index)->tokenCheck());
-            p.push_back(tokens.at(index+1)->tokenCheck());
-            piping(p);
+            vector<Command*> p;
+            // p.push_back(tokens.at(index));
+            // p.push_back(tokens.at(index+1));
+            // piping(p);
+            int y = index;
+            while(tokens.at(y)->getpipe() != 3)
+            {
+                //cout << tokens.at(y)->tokenCheck() << endl;
+                p.push_back(tokens.at(y));
+                y++;
+            }
+            //cout << tokens.at(y)->tokenCheck() << endl;
+            p.push_back(tokens.at(y));
+            //piping(p);
+            //index += p.size()-1;
+            if(piping(p) != -1)
+            {
+                tokens.at(index)->addstatus(true);
+            }
+            index += p.size()-1;
+            
         }
         counter --;
-        
+    
         if(allTrue == false && percon == true && counter == 0)
         {
             if(idex + tokens.at(idex)->getprec() != tokens.size()-1)
@@ -635,6 +719,8 @@ void Execute::terminal(const vector<Command*>& tokens) //this function will run 
         
     }
     
+    
+    }
     
 }
 

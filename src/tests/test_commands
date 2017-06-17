@@ -1,0 +1,11 @@
+test -e main.cpp
+test main.cpp
+[main.cpp] && echo main.cpp is here
+[-d test]
+[-d tests] || echo no 
+[-f main.cpp]
+[-f main.cpp] && echo yes
+test -d bin && echo yes
+(test -d tests && echo yes) || echo no
+([-d tests] && echo yes) || echo no
+q
