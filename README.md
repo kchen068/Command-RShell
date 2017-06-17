@@ -27,6 +27,9 @@ a
 
 b
 
+ASSIGNMENT 4 ADDED FUNCTIONALITIES:
+---
+In this update we have added the capabilities with redirection using the tokens: "<", ">>", ">". We have also added the ability to pipe as well. The user just has to simply type out the redirection or pipe in typical fashion for bash commands. E.G ("cat >> input.txt" , "ls -a | grep .cpp").
 
 BUGS: 
 ---
@@ -37,7 +40,7 @@ BUGS:
 * Echo multiple words/sentences will sometimes result in the output: "Error: echo command not found"
 * When using file redirection you must have a space before and after the "<",">", and ">>". E.G.("cat > input.txt"  and " cat >> input.txt") not following this format may cause an error. 
 * When using the command "cat" with ">" or ">>" you have to press control+d in order to end the outputting/inputting.
-
+* When using the input redirection, a blank error statement may print sporadically. This bug does not effect the overall performance of the bash. 
 LANGUAGE: 
 ---
 C++
