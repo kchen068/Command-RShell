@@ -2,7 +2,6 @@
 #define COMMAND_H
 #include <iostream>
 #include <string>
-#include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 using namespace std;
 
@@ -13,6 +12,9 @@ class Command
         bool status;
         int sign;
         bool test;
+        int precsize;
+        int redirect;
+        int pipe;
 
     public:
         Command();
@@ -25,6 +27,12 @@ class Command
         void addsign(int s);
         bool istest();
         void addtest(bool tst);
+        void addprec(int i);
+        int getprec();
+        void addredirect(int a);
+        int getredirect();
+        void addpipe(int a);
+        int getpipe();
 };
 
 

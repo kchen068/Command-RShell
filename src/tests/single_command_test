@@ -1,0 +1,7 @@
+ls
+ls -a
+mkdir a
+mkdir b
+echo hello everyone
+echo single
+q

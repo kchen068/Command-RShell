@@ -46,3 +46,21 @@ bool Command::istest(){
 void Command::addtest(bool tst){
     this->test = tst;
 }
+void Command::addprec(int i){
+    this->precsize = i;
+}
+int Command::getprec(){
+    return this->precsize;
+}
+void Command::addredirect(int a){
+    this->redirect = a;
+}
+int Command::getredirect(){
+    return this->redirect;
+}
+void Command::addpipe(int a){
+    this->pipe = a;
+}
+int Command::getpipe(){
+    return this->pipe;
+}

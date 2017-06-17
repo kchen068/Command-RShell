@@ -1,0 +1,11 @@
+ls || echo hello && ls -a
+mkdir test && ps ; ls -a
+echo hello ; ls -a || ps
+rm -r test ; ls || ps
+echo hi1 ; echo hi2 && echo hi3 || echo hi4
+cat nothing || echo connector_works ; echo connecter_works
+cat nothing && echo no && echo no2
+cat nothing ; echo test_connect || echo good
+mkdir test || ls -a ; ls
+rm -r test && ls -a || echo good
+q

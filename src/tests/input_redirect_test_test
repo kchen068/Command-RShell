@@ -1,0 +1,7 @@
+cat < tests/FileTests/Input1
+tr a-z A-Z < tests/FileTests/Input2
+grep is < tests/FileTests/Input3
+cat < tests/FileTests/Input4 > outputfileTest
+grep Hi < tests/FileTests/Input | wc
+cat < tests/FileTests/Input4 | tr a-z A-Z
+q

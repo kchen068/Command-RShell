@@ -1,0 +1,11 @@
+ls > output1
+ps > output2
+cat < main.cpp > output3
+echo hi testing output > output4
+echo hello | tr a-z A-Z > output5
+rm output1
+rm output2
+rm output3
+rm output4
+rm output5
+q

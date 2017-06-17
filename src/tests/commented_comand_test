@@ -1,0 +1,11 @@
+ls # comment || echo hello && ls -a
+mkdir test && ps # comment ;  ls -a
+echo hello ; ls -a || ps #comment
+rm -r test #comment ;ls || ps
+echo hi1 ; echo hi2 && echo hi3 || echo hi4 # comment # comment
+cat nothing  # comment || echo connector_works ; echo connecter_works # comment
+cat nothing # comment && echo no  # comment && echo no2
+cat nothing # comment  ; echo test_connect # comment || echo good # comment
+mkdir test || ls -a ; ls #comment 
+rm -r test && ls -a || echo good #comment
+q
