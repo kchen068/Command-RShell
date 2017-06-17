@@ -1,0 +1,4 @@
+echo hi >> output1.txt
+echo hi2 >> output1.txt ; echo works
+cat >> output1.txt
+echo hi ; echo hell >> input.txt

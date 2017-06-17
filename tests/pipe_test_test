@@ -1,0 +1,7 @@
+ls -a | grep .cpp
+ls -a | grep .cpp | tr a-z A-Z
+ls | cat | wc
+ps | wc
+echo hello Test | tr a-z A-Z
+cat < tests/FileTests/Input1 | tr a-z A-Z > output
+q
